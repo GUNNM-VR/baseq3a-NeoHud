@@ -6,8 +6,8 @@ This is a HUD parser for Quake III arena, based on Cyrax's baseq3a.
 
 It is easy to use and highly customisable with preprocessors commands (kind of), and cvar setup from the HUD file.
 
-The syntax is very close of cpma HUD syntax, and team arena/quake live HUD/menu.
-Inspired by Q3plus, you can change the HUD from the in-game menu.
+The syntax is very close to cpma HUD syntax, and team arena/quake live HUD/menu.
+Inspired by Q3plus, you can change the HUD from the game menu.
 
 ### Some HUD files are already included :
 * defrag like
