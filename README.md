@@ -20,7 +20,7 @@ For example, in your autoexec.cfg :
 ```
 bind 	PGUP 	"prevTeamMember"
 bind 	PGDN 	"nextTeamMember"
-bind 	o 			"nextOrder"
+bind 	o 		"nextOrder"
 ```
 
 # Create a new HUD
