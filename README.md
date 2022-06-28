@@ -23,7 +23,7 @@ bind 	PGDN 	"nextTeamMember"
 bind 	o 			"nextOrder"
 ```
 
-# create a new HUD
+# Create a new HUD
 Instructions are in the embeded document :
 https://github.com/GUNNM-VR/baseq3a-NeoHud/blob/master/assets/hud/readme.txt
 
