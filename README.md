@@ -23,7 +23,11 @@ bind 	PGDN 	"nextTeamMember"
 bind 	o 			"nextOrder"
 ```
 
-# baseq3a freatures:
+# create a new HUD
+Instructions are in the embeded document :
+https://github.com/GUNNM-VR/baseq3a-NeoHud/blob/master/assets/hud/readme.txt
+
+# baseq3a features:
 
  * new toolchain used (optimized q3lcc and q3asm)
  * upstream security fixes
