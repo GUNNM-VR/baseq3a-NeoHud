@@ -1,0 +1,44 @@
+﻿cl : Ligne de commande warning D9035: l'option 'Gm' est déconseillée et sera supprimée dans une version ultérieure
+  q_shared.c
+  q_math.c
+  g_weapon.c
+  g_utils.c
+  g_unlagged.c
+  g_trigger.c
+  g_team.c
+  g_target.c
+  g_syscalls.c
+  g_svcmds.c
+  g_spawn.c
+  g_session.c
+  g_rotation.c
+  g_mover.c
+  g_missile.c
+  g_misc.c
+  g_mem.c
+  g_main.c
+  g_items.c
+  g_combat.c
+  Génération de code en cours...
+  Compilation en cours...
+  g_cmds.c
+  g_client.c
+  g_bot.c
+  g_arenas.c
+  g_active.c
+  bg_slidemove.c
+  bg_pmove.c
+  bg_misc.c
+  ai_vcmd.c
+  ai_team.c
+  ai_main.c
+  ai_dmq3.c
+  ai_dmnet.c
+  ai_cmd.c
+  ai_chat.c
+  Génération de code en cours...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1216,5): warning MSB8012: TargetPath(C:\travail\qvm_HUD_clean\build\win32-msvc\.\Win32\Debug\game.dll) ne correspond pas à la valeur de la propriété OutputFile (C:\travail\qvm_HUD_clean\build\win32-msvc\Win32\Debug\qagamex86.dll) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1218,5): warning MSB8012: TargetName(game) ne correspond pas à la valeur de la propriété OutputFile (qagamex86) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+ai_chat.obj : warning LNK4075: ' /EDITANDCONTINUE' ignoré à cause de la spécification '/SAFESEH'
+     Création de la bibliothèque .\Win32\Debug\game.lib et de l'objet .\Win32\Debug\game.exp
+  game.vcxproj -> C:\travail\qvm_HUD_clean\build\win32-msvc\.\Win32\Debug\game.dll

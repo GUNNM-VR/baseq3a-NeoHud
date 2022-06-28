@@ -1,0 +1,4346 @@
+code
+proc CG_DrawClientScore 160 32
+file "..\..\..\..\code\cgame\cg_scoreboard.c"
+line 63
+;1:// Copyright (C) 1999-2000 Id Software, Inc.
+;2://
+;3:// cg_scoreboard -- draw the scoreboard on top of the game screen
+;4:#include "cg_local.h"
+;5:
+;6:
+;7:#define	SCOREBOARD_X		(0)
+;8:
+;9:#define SB_HEADER			86
+;10:#define SB_TOP				(SB_HEADER+32)
+;11:
+;12:// Where the status bar starts, so we don't overwrite it
+;13:#define SB_STATUSBAR		420
+;14:
+;15:#define SB_NORMAL_HEIGHT	40
+;16:#define SB_INTER_HEIGHT		16 // interleaved height
+;17:
+;18:#define SB_MAXCLIENTS_NORMAL  ((SB_STATUSBAR - SB_TOP) / SB_NORMAL_HEIGHT)
+;19:#define SB_MAXCLIENTS_INTER   ((SB_STATUSBAR - SB_TOP) / SB_INTER_HEIGHT - 1)
+;20:
+;21:// Used when interleaved
+;22:
+;23:
+;24:
+;25:#define SB_LEFT_BOTICON_X	(SCOREBOARD_X+0)
+;26:#define SB_LEFT_HEAD_X		(SCOREBOARD_X+32)
+;27:#define SB_RIGHT_BOTICON_X	(SCOREBOARD_X+64)
+;28:#define SB_RIGHT_HEAD_X		(SCOREBOARD_X+96)
+;29:// Normal
+;30:#define SB_BOTICON_X		(SCOREBOARD_X+32)
+;31:#define SB_HEAD_X			(SCOREBOARD_X+64)
+;32:
+;33:#define SB_SCORELINE_X		112
+;34:
+;35:#define SB_RATING_WIDTH	    (6 * BIGCHAR_WIDTH) // width 6
+;36:#define SB_SCORE_X			(SB_SCORELINE_X + BIGCHAR_WIDTH) // width 6
+;37:#define SB_RATING_X			(SB_SCORELINE_X + 6 * BIGCHAR_WIDTH) // width 6
+;38:#define SB_PING_X			(SB_SCORELINE_X + 12 * BIGCHAR_WIDTH + 8) // width 5
+;39:#define SB_TIME_X			(SB_SCORELINE_X + 17 * BIGCHAR_WIDTH + 8) // width 5
+;40:#define SB_NAME_X			(SB_SCORELINE_X + 22 * BIGCHAR_WIDTH) // width 15
+;41:
+;42:// The new and improved score board
+;43://
+;44:// In cases where the number of clients is high, the score board heads are interleaved
+;45:// here's the layout
+;46:
+;47://
+;48://	0   32   80  112  144   240  320  400   <-- pixel position
+;49://  bot head bot head score ping time name
+;50://  
+;51://  wins/losses are drawn on bot icon now
+;52:
+;53:static qboolean localClient; // true if local client has been displayed
+;54:
+;55:
+;56:/*
+;57:=================
+;58:CG_DrawClientScore
+;59:=================
+;60:*/
+;61:#ifdef NEOHUD
+;62:// TODO use hud info
+;63:static void CG_DrawClientScore( int y, score_t *score, float *color, float fade, qboolean largeFormat ) {
+line 72
+;64:	char	string[64];
+;65:	vec3_t	headAngles;
+;66:	clientInfo_t	*ci;
+;67:	int iconx, headx;
+;68:	vec4_t fadeColor;
+;69:	int icony, iconw, iconh;
+;70:	int heady, headw, headh;
+;71:	//item_t itm;
+;72:	int iconSizeW = ICON_SIZE;//48;
+ADDRLP4 108
+CNSTI4 48
+ASGNI4
+line 73
+;73:	int iconSizeH = ICON_SIZE;
+ADDRLP4 36
+CNSTI4 48
+ASGNI4
+line 75
+;74:
+;75:	if ( score->client < 0 || score->client >= cgs.maxclients ) {
+ADDRLP4 136
+ADDRFP4 4
+INDIRP4
+INDIRI4
+ASGNI4
+ADDRLP4 136
+INDIRI4
+CNSTI4 0
+LTI4 $81
+ADDRLP4 136
+INDIRI4
+ADDRGP4 cgs+31504
+INDIRI4
+LTI4 $78
+LABELV $81
+line 76
+;76:		Com_Printf( "Bad score->client: %i\n", score->client );
+ADDRGP4 $82
+ARGP4
+ADDRFP4 4
+INDIRP4
+INDIRI4
+ARGI4
+ADDRGP4 Com_Printf
+CALLV
+pop
+line 77
+;77:		return;
+ADDRGP4 $77
+JUMPV
+LABELV $78
+line 80
+;78:	}
+;79:
+;80:	ci = &cgs.clientinfo[score->client];
+ADDRLP4 16
+ADDRFP4 4
+INDIRP4
+INDIRI4
+CNSTI4 1652
+MULI4
+ADDRGP4 cgs+40996
+ADDP4
+ASGNP4
+line 81
+;81:	if ( !ci->infoValid )
+ADDRLP4 16
+INDIRP4
+INDIRI4
+CNSTI4 0
+NEI4 $84
+line 82
+;82:		return;
+ADDRGP4 $77
+JUMPV
+LABELV $84
+line 84
+;83:
+;84:	headx = SB_HEAD_X + (SB_RATING_WIDTH / 2);
+ADDRLP4 104
+CNSTI4 112
+ASGNI4
+line 85
+;85:	iconx = SB_BOTICON_X + (SB_RATING_WIDTH / 2);
+ADDRLP4 32
+CNSTI4 80
+ASGNI4
+line 89
+;86:
+;87:	//itm = itemArray[ScoreboardIcoHead_idx];
+;88:
+;89:	if ( largeFormat ) {
+ADDRFP4 16
+INDIRI4
+CNSTI4 0
+EQI4 $86
+line 90
+;90:		heady = y - (iconSizeH - BIGCHAR_HEIGHT) / 2;
+ADDRLP4 120
+ADDRFP4 0
+INDIRI4
+ADDRLP4 36
+INDIRI4
+CNSTI4 16
+SUBI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 91
+;91:		headw = iconSizeW;
+ADDRLP4 124
+ADDRLP4 108
+INDIRI4
+ASGNI4
+line 92
+;92:		headh = iconSizeH;
+ADDRLP4 128
+ADDRLP4 36
+INDIRI4
+ASGNI4
+line 94
+;93:
+;94:		icony = y - (32 - BIGCHAR_HEIGHT) / 2;
+ADDRLP4 132
+ADDRFP4 0
+INDIRI4
+CNSTI4 8
+SUBI4
+ASGNI4
+line 95
+;95:		iconw = 32;
+ADDRLP4 112
+CNSTI4 32
+ASGNI4
+line 96
+;96:		iconh = 32;
+ADDRLP4 116
+CNSTI4 32
+ASGNI4
+line 97
+;97:	}
+ADDRGP4 $87
+JUMPV
+LABELV $86
+line 98
+;98:	else {
+line 99
+;99:		heady = y;
+ADDRLP4 120
+ADDRFP4 0
+INDIRI4
+ASGNI4
+line 100
+;100:		headw = 16;
+ADDRLP4 124
+CNSTI4 16
+ASGNI4
+line 101
+;101:		headh = 16;
+ADDRLP4 128
+CNSTI4 16
+ASGNI4
+line 103
+;102:
+;103:		iconw = 16;
+ADDRLP4 112
+CNSTI4 16
+ASGNI4
+line 104
+;104:		iconh = 16;
+ADDRLP4 116
+CNSTI4 16
+ASGNI4
+line 105
+;105:	}
+LABELV $87
+line 107
+;106:
+;107:	trap_R_SetColor( NULL );
+CNSTP4 0
+ARGP4
+ADDRGP4 trap_R_SetColor
+CALLV
+pop
+line 110
+;108:
+;109:	// draw the handicap or bot skill marker (unless player has flag)
+;110:	if ( ci->powerups & ( 1 << PW_NEUTRALFLAG ) ) {
+ADDRLP4 16
+INDIRP4
+CNSTI4 108
+ADDP4
+INDIRI4
+CNSTI4 512
+BANDI4
+CNSTI4 0
+EQI4 $88
+line 111
+;111:		CG_DrawFlagModel(iconx, icony, iconw, iconh, TEAM_FREE, qfalse );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 132
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 112
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 116
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 0
+ARGI4
+ADDRGP4 CG_DrawFlagModel
+CALLV
+pop
+line 112
+;112:	}
+ADDRGP4 $89
+JUMPV
+LABELV $88
+line 113
+;113:	else if ( ci->powerups & (1 << PW_REDFLAG) ) {
+ADDRLP4 16
+INDIRP4
+CNSTI4 108
+ADDP4
+INDIRI4
+CNSTI4 128
+BANDI4
+CNSTI4 0
+EQI4 $90
+line 114
+;114:		CG_DrawFlagModel(iconx, icony, iconw, iconh, TEAM_RED, qfalse );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 132
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 112
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 116
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 1
+ARGI4
+CNSTI4 0
+ARGI4
+ADDRGP4 CG_DrawFlagModel
+CALLV
+pop
+line 115
+;115:	}
+ADDRGP4 $91
+JUMPV
+LABELV $90
+line 116
+;116:	else if ( ci->powerups & (1 << PW_BLUEFLAG) ) {
+ADDRLP4 16
+INDIRP4
+CNSTI4 108
+ADDP4
+INDIRI4
+CNSTI4 256
+BANDI4
+CNSTI4 0
+EQI4 $92
+line 117
+;117:		CG_DrawFlagModel(iconx, icony, iconw, iconh, TEAM_BLUE, qfalse );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 132
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 112
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 116
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 2
+ARGI4
+CNSTI4 0
+ARGI4
+ADDRGP4 CG_DrawFlagModel
+CALLV
+pop
+line 118
+;118:	}
+ADDRGP4 $93
+JUMPV
+LABELV $92
+line 119
+;119:	else {
+line 120
+;120:		if ( ci->botSkill > 0 && ci->botSkill <= 5 ) {
+ADDRLP4 16
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+CNSTI4 0
+LEI4 $94
+ADDRLP4 16
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+CNSTI4 5
+GTI4 $94
+line 121
+;121:			if ( cg_drawIcons.integer ) {
+ADDRGP4 cg_drawIcons+12
+INDIRI4
+CNSTI4 0
+EQI4 $95
+line 122
+;122:				CG_DrawPic( iconx, icony, iconw, iconh, cgs.media.botSkillShaders[ci->botSkill - 1] );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 132
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 112
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 116
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+CNSTI4 2
+LSHI4
+ADDRGP4 cgs+148752+368-4
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawPic
+CALLV
+pop
+line 123
+;123:			}
+line 124
+;124:		} else if ( ci->handicap < 100 ) {
+ADDRGP4 $95
+JUMPV
+LABELV $94
+ADDRLP4 16
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRI4
+CNSTI4 100
+GEI4 $102
+line 125
+;125:			BG_sprintf( string, "%i", ci->handicap );
+ADDRLP4 40
+ARGP4
+ADDRGP4 $104
+ARGP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 BG_sprintf
+CALLI4
+pop
+line 126
+;126:			if ( cgs.gametype == GT_TOURNAMENT )
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 1
+NEI4 $105
+line 127
+;127:				CG_DrawString( iconx, y - SMALLCHAR_HEIGHT/2, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CNSTI4 8
+SUBI4
+CVIF4 4
+ARGF4
+ADDRLP4 40
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+CNSTF4 1090519040
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+ADDRGP4 $106
+JUMPV
+LABELV $105
+line 129
+;128:			else
+;129:				CG_DrawString( iconx, y, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 40
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+CNSTF4 1090519040
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+LABELV $106
+line 130
+;130:		}
+LABELV $102
+LABELV $95
+line 133
+;131:
+;132:		// draw the wins / losses
+;133:		if ( cgs.gametype == GT_TOURNAMENT ) {
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 1
+NEI4 $108
+line 134
+;134:			BG_sprintf( string, "%i/%i", ci->wins, ci->losses );
+ADDRLP4 40
+ARGP4
+ADDRGP4 $111
+ARGP4
+ADDRLP4 16
+INDIRP4
+CNSTI4 92
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 16
+INDIRP4
+CNSTI4 96
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 BG_sprintf
+CALLI4
+pop
+line 135
+;135:			if ( ci->handicap < 100 && !ci->botSkill ) {
+ADDRLP4 16
+INDIRP4
+CNSTI4 88
+ADDP4
+INDIRI4
+CNSTI4 100
+GEI4 $112
+ADDRLP4 16
+INDIRP4
+CNSTI4 40
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $112
+line 136
+;136:				CG_DrawString( iconx, y + SMALLCHAR_HEIGHT/2, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CNSTI4 8
+ADDI4
+CVIF4 4
+ARGF4
+ADDRLP4 40
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+CNSTF4 1090519040
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 137
+;137:			} else {
+ADDRGP4 $113
+JUMPV
+LABELV $112
+line 138
+;138:				CG_DrawString( iconx, y, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 40
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+CNSTF4 1090519040
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 139
+;139:			}
+LABELV $113
+line 140
+;140:		}
+LABELV $108
+line 141
+;141:	}
+LABELV $93
+LABELV $91
+LABELV $89
+line 144
+;142:
+;143:	// draw the face
+;144:	VectorClear( headAngles );
+ADDRLP4 20
+CNSTF4 0
+ASGNF4
+ADDRLP4 20+4
+CNSTF4 0
+ASGNF4
+ADDRLP4 20+8
+CNSTF4 0
+ASGNF4
+line 145
+;145:	headAngles[YAW] = 180;
+ADDRLP4 20+4
+CNSTF4 1127481344
+ASGNF4
+line 146
+;146:	if( largeFormat ) {
+ADDRFP4 16
+INDIRI4
+CNSTI4 0
+EQI4 $117
+line 147
+;147:		CG_DrawHead(headx, heady, headw, headh, score->client, headAngles, qfalse);
+ADDRLP4 104
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 120
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 124
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 128
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 4
+INDIRP4
+INDIRI4
+ARGI4
+ADDRLP4 20
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRGP4 CG_DrawHead
+CALLV
+pop
+line 148
+;148:	}
+ADDRGP4 $118
+JUMPV
+LABELV $117
+line 149
+;149:	else {
+line 150
+;150:		CG_DrawHead( headx, y, 16, 16, score->client, headAngles, qfalse);
+ADDRLP4 104
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+ADDRFP4 4
+INDIRP4
+INDIRI4
+ARGI4
+ADDRLP4 20
+ARGP4
+CNSTI4 0
+ARGI4
+ADDRGP4 CG_DrawHead
+CALLV
+pop
+line 151
+;151:	}
+LABELV $118
+line 165
+;152:
+;153:#ifdef MISSIONPACK
+;154:	// draw the team task
+;155:	if ( ci->teamTask != TEAMTASK_NONE ) {
+;156:		if ( ci->teamTask == TEAMTASK_OFFENSE ) {
+;157:			CG_DrawPic( headx + 48, y, 16, 16, cgs.media.assaultShader );
+;158:		}
+;159:		else if ( ci->teamTask == TEAMTASK_DEFENSE ) {
+;160:			CG_DrawPic( headx + 48, y, 16, 16, cgs.media.defendShader );
+;161:		}
+;162:	}
+;163:#endif
+;164:	// draw the score line
+;165:	if ( score->ping == -1 ) {
+ADDRFP4 4
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+CNSTI4 -1
+NEI4 $119
+line 166
+;166:		BG_sprintf( string, " connecting" );
+ADDRLP4 40
+ARGP4
+ADDRGP4 $121
+ARGP4
+ADDRGP4 BG_sprintf
+CALLI4
+pop
+line 167
+;167:	} else if ( ci->team == TEAM_SPECTATOR ) {
+ADDRGP4 $120
+JUMPV
+LABELV $119
+ADDRLP4 16
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRI4
+CNSTI4 3
+NEI4 $122
+line 168
+;168:		BG_sprintf( string, " SPECT %3i %4i", score->ping, score->time );
+ADDRLP4 40
+ARGP4
+ADDRGP4 $124
+ARGP4
+ADDRLP4 140
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 140
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 140
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 BG_sprintf
+CALLI4
+pop
+line 169
+;169:	} else {
+ADDRGP4 $123
+JUMPV
+LABELV $122
+line 170
+;170:		BG_sprintf( string, "%5i %4i %4i", score->score, score->ping, score->time );
+ADDRLP4 40
+ARGP4
+ADDRGP4 $125
+ARGP4
+ADDRLP4 140
+ADDRFP4 4
+INDIRP4
+ASGNP4
+ADDRLP4 140
+INDIRP4
+CNSTI4 4
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 140
+INDIRP4
+CNSTI4 8
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 140
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRI4
+ARGI4
+ADDRGP4 BG_sprintf
+CALLI4
+pop
+line 171
+;171:	}
+LABELV $123
+LABELV $120
+line 174
+;172:
+;173:	// highlight your position
+;174:	if ( score->client == cg.snap->ps.clientNum ) {
+ADDRFP4 4
+INDIRP4
+INDIRI4
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 184
+ADDP4
+INDIRI4
+NEI4 $126
+line 178
+;175:		float	hcolor[4];
+;176:		int		rank;
+;177:
+;178:		localClient = qtrue;
+ADDRGP4 localClient
+CNSTI4 1
+ASGNI4
+line 180
+;179:
+;180:		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR 
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 304
+ADDP4
+INDIRI4
+CNSTI4 3
+EQI4 $133
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 3
+LTI4 $129
+LABELV $133
+line 181
+;181:			|| cgs.gametype >= GT_TEAM ) {
+line 182
+;182:			rank = -1;
+ADDRLP4 156
+CNSTI4 -1
+ASGNI4
+line 183
+;183:		} else {
+ADDRGP4 $130
+JUMPV
+LABELV $129
+line 184
+;184:			rank = cg.snap->ps.persistant[PERS_RANK] & ~RANK_TIED_FLAG;
+ADDRLP4 156
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 300
+ADDP4
+INDIRI4
+CNSTI4 -16385
+BANDI4
+ASGNI4
+line 185
+;185:		}
+LABELV $130
+line 186
+;186:		if ( rank == 0 ) {
+ADDRLP4 156
+INDIRI4
+CNSTI4 0
+NEI4 $135
+line 187
+;187:			hcolor[0] = 0;
+ADDRLP4 140
+CNSTF4 0
+ASGNF4
+line 188
+;188:			hcolor[1] = 0;
+ADDRLP4 140+4
+CNSTF4 0
+ASGNF4
+line 189
+;189:			hcolor[2] = 0.7f;
+ADDRLP4 140+8
+CNSTF4 1060320051
+ASGNF4
+line 190
+;190:		} else if ( rank == 1 ) {
+ADDRGP4 $136
+JUMPV
+LABELV $135
+ADDRLP4 156
+INDIRI4
+CNSTI4 1
+NEI4 $139
+line 191
+;191:			hcolor[0] = 0.7f;
+ADDRLP4 140
+CNSTF4 1060320051
+ASGNF4
+line 192
+;192:			hcolor[1] = 0;
+ADDRLP4 140+4
+CNSTF4 0
+ASGNF4
+line 193
+;193:			hcolor[2] = 0;
+ADDRLP4 140+8
+CNSTF4 0
+ASGNF4
+line 194
+;194:		} else if ( rank == 2 ) {
+ADDRGP4 $140
+JUMPV
+LABELV $139
+ADDRLP4 156
+INDIRI4
+CNSTI4 2
+NEI4 $143
+line 195
+;195:			hcolor[0] = 0.7f;
+ADDRLP4 140
+CNSTF4 1060320051
+ASGNF4
+line 196
+;196:			hcolor[1] = 0.7f;
+ADDRLP4 140+4
+CNSTF4 1060320051
+ASGNF4
+line 197
+;197:			hcolor[2] = 0;
+ADDRLP4 140+8
+CNSTF4 0
+ASGNF4
+line 198
+;198:		} else {
+ADDRGP4 $144
+JUMPV
+LABELV $143
+line 199
+;199:			hcolor[0] = 0.7f;
+ADDRLP4 140
+CNSTF4 1060320051
+ASGNF4
+line 200
+;200:			hcolor[1] = 0.7f;
+ADDRLP4 140+4
+CNSTF4 1060320051
+ASGNF4
+line 201
+;201:			hcolor[2] = 0.7f;
+ADDRLP4 140+8
+CNSTF4 1060320051
+ASGNF4
+line 202
+;202:		}
+LABELV $144
+LABELV $140
+LABELV $136
+line 204
+;203:
+;204:		hcolor[3] = fade * 0.7;
+ADDRLP4 140+12
+ADDRFP4 12
+INDIRF4
+CNSTF4 1060320051
+MULF4
+ASGNF4
+line 205
+;205:		CG_FillRect( SB_SCORELINE_X + BIGCHAR_WIDTH + (SB_RATING_WIDTH / 2), y, 
+CNSTF4 1127219200
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1139277824
+ARGF4
+CNSTF4 1099431936
+ARGF4
+ADDRLP4 140
+ARGP4
+ADDRGP4 CG_FillRect
+CALLV
+pop
+line 208
+;206:			640 - SB_SCORELINE_X - BIGCHAR_WIDTH - (SB_RATING_WIDTH/2),
+;207:			BIGCHAR_HEIGHT+1, hcolor );
+;208:	}
+LABELV $126
+line 210
+;209:
+;210:	VectorSet( fadeColor, 1, 1, 1 );
+ADDRLP4 0
+CNSTF4 1065353216
+ASGNF4
+ADDRLP4 0+4
+CNSTF4 1065353216
+ASGNF4
+ADDRLP4 0+8
+CNSTF4 1065353216
+ASGNF4
+line 211
+;211:	fadeColor[3] = fade;
+ADDRLP4 0+12
+ADDRFP4 12
+INDIRF4
+ASGNF4
+line 213
+;212:	// score
+;213:	CG_DrawString( SB_SCORELINE_X + (SB_RATING_WIDTH / 2), y, string, fadeColor, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW );
+CNSTF4 1126170624
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 40
+ARGP4
+ADDRLP4 0
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 1
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 215
+;214:	// name
+;215:	CG_DrawString( SB_SCORELINE_X + (SB_RATING_WIDTH / 2) + BIGCHAR_WIDTH*16, y, ci->name, fadeColor, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_PROPORTIONAL );
+CNSTF4 1137704960
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 16
+INDIRP4
+CNSTI4 4
+ADDP4
+ARGP4
+ADDRLP4 0
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 5
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 218
+;216:
+;217:	// add the "ready" marker for intermission exiting
+;218:	if ( cg.snap->ps.stats[ STAT_CLIENTS_READY ] & ( 1 << score->client ) ) {
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 248
+ADDP4
+INDIRI4
+CNSTI4 1
+ADDRFP4 4
+INDIRP4
+INDIRI4
+LSHI4
+BANDI4
+CNSTI4 0
+EQI4 $153
+line 219
+;219:		CG_DrawString( iconx, y, "READY", color, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_FORCE_COLOR );
+ADDRLP4 32
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRFP4 0
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRGP4 $156
+ARGP4
+ADDRFP4 8
+INDIRP4
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 3
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 220
+;220:	}
+LABELV $153
+line 223
+;221:
+;222:	// set bounds for scoreboard clicks
+;223:	score->minx = SB_SCORELINE_X;
+ADDRFP4 4
+INDIRP4
+CNSTI4 60
+ADDP4
+CNSTI4 112
+ASGNI4
+line 224
+;224:	score->maxx = SCREEN_WIDTH - 8;
+ADDRFP4 4
+INDIRP4
+CNSTI4 64
+ADDP4
+CNSTI4 632
+ASGNI4
+line 225
+;225:	score->miny = y;
+ADDRFP4 4
+INDIRP4
+CNSTI4 68
+ADDP4
+ADDRFP4 0
+INDIRI4
+ASGNI4
+line 226
+;226:	score->maxy = y + BIGCHAR_HEIGHT;
+ADDRFP4 4
+INDIRP4
+CNSTI4 72
+ADDP4
+ADDRFP4 0
+INDIRI4
+CNSTI4 16
+ADDI4
+ASGNI4
+line 227
+;227:	if ( largeFormat )
+ADDRFP4 16
+INDIRI4
+CNSTI4 0
+EQI4 $157
+line 228
+;228:	{
+line 229
+;229:		score->miny -= ( iconSizeH - BIGCHAR_HEIGHT ) / 2;
+ADDRLP4 140
+ADDRFP4 4
+INDIRP4
+CNSTI4 68
+ADDP4
+ASGNP4
+ADDRLP4 140
+INDIRP4
+ADDRLP4 140
+INDIRP4
+INDIRI4
+ADDRLP4 36
+INDIRI4
+CNSTI4 16
+SUBI4
+CNSTI4 2
+DIVI4
+SUBI4
+ASGNI4
+line 230
+;230:		score->maxy += ( iconSizeW - BIGCHAR_HEIGHT ) / 2;
+ADDRLP4 144
+ADDRFP4 4
+INDIRP4
+CNSTI4 72
+ADDP4
+ASGNP4
+ADDRLP4 144
+INDIRP4
+ADDRLP4 144
+INDIRP4
+INDIRI4
+ADDRLP4 108
+INDIRI4
+CNSTI4 16
+SUBI4
+CNSTI4 2
+DIVI4
+ADDI4
+ASGNI4
+line 231
+;231:	}
+LABELV $157
+line 232
+;232:}
+LABELV $77
+endproc CG_DrawClientScore 160 32
+export CG_ScoreboardClick
+proc CG_ScoreboardClick 20 8
+line 405
+;233:#else
+;234:static void CG_DrawClientScore( int y, score_t *score, float *color, float fade, qboolean largeFormat ) {
+;235:	char	string[64];
+;236:	vec3_t	headAngles;
+;237:	clientInfo_t	*ci;
+;238:	int iconx, headx;
+;239:	vec4_t c;
+;240:
+;241:	if ( score->client < 0 || score->client >= cgs.maxclients ) {
+;242:		Com_Printf( "Bad score->client: %i\n", score->client );
+;243:		return;
+;244:	}
+;245:
+;246:	ci = &cgs.clientinfo[score->client];
+;247:	if ( !ci->infoValid )
+;248:		return;
+;249:
+;250:	iconx = SB_BOTICON_X + (SB_RATING_WIDTH / 2);
+;251:	headx = SB_HEAD_X + (SB_RATING_WIDTH / 2);
+;252:
+;253:	trap_R_SetColor( NULL );
+;254:
+;255:	// draw the handicap or bot skill marker (unless player has flag)
+;256:	if ( ci->powerups & ( 1 << PW_NEUTRALFLAG ) ) {
+;257:		if( largeFormat ) {
+;258:			CG_DrawFlagModel( iconx, y - ( 32 - BIGCHAR_HEIGHT ) / 2, 32, 32, TEAM_FREE, qfalse );
+;259:		}
+;260:		else {
+;261:			CG_DrawFlagModel( iconx, y, 16, 16, TEAM_FREE, qfalse );
+;262:		}
+;263:	} else if ( ci->powerups & ( 1 << PW_REDFLAG ) ) {
+;264:		if( largeFormat ) {
+;265:			CG_DrawFlagModel( iconx, y - ( 32 - BIGCHAR_HEIGHT ) / 2, 32, 32, TEAM_RED, qfalse );
+;266:		}
+;267:		else {
+;268:			CG_DrawFlagModel( iconx, y, 16, 16, TEAM_RED, qfalse );
+;269:		}
+;270:	} else if ( ci->powerups & ( 1 << PW_BLUEFLAG ) ) {
+;271:		if( largeFormat ) {
+;272:			CG_DrawFlagModel( iconx, y - ( 32 - BIGCHAR_HEIGHT ) / 2, 32, 32, TEAM_BLUE, qfalse );
+;273:		}
+;274:		else {
+;275:			CG_DrawFlagModel( iconx, y, 16, 16, TEAM_BLUE, qfalse );
+;276:		}
+;277:	} else {
+;278:		if ( ci->botSkill > 0 && ci->botSkill <= 5 ) {
+;279:			if ( cg_drawIcons.integer ) {
+;280:				if( largeFormat ) {
+;281:					CG_DrawPic( iconx, y - ( 32 - BIGCHAR_HEIGHT ) / 2, 32, 32, cgs.media.botSkillShaders[ ci->botSkill - 1 ] );
+;282:				}
+;283:				else {
+;284:					CG_DrawPic( iconx, y, 16, 16, cgs.media.botSkillShaders[ ci->botSkill - 1 ] );
+;285:				}
+;286:			}
+;287:		} else if ( ci->handicap < 100 ) {
+;288:			BG_sprintf( string, "%i", ci->handicap );
+;289:			if ( cgs.gametype == GT_TOURNAMENT )
+;290:				CG_DrawString( iconx, y - SMALLCHAR_HEIGHT/2, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+;291:			else
+;292:				CG_DrawString( iconx, y, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+;293:		}
+;294:
+;295:		// draw the wins / losses
+;296:		if ( cgs.gametype == GT_TOURNAMENT ) {
+;297:			BG_sprintf( string, "%i/%i", ci->wins, ci->losses );
+;298:			if ( ci->handicap < 100 && !ci->botSkill ) {
+;299:				CG_DrawString( iconx, y + SMALLCHAR_HEIGHT/2, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+;300:			} else {
+;301:				CG_DrawString( iconx, y, string, color, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, 0, DS_FORCE_COLOR );
+;302:			}
+;303:		}
+;304:	}
+;305:
+;306:	// draw the face
+;307:	VectorClear( headAngles );
+;308:	headAngles[YAW] = 180;
+;309:	if( largeFormat ) {
+;310:		CG_DrawHead( headx, y - ( ICON_SIZE - BIGCHAR_HEIGHT ) / 2, ICON_SIZE, ICON_SIZE, 
+;311:			score->client, headAngles );
+;312:	}
+;313:	else {
+;314:		CG_DrawHead( headx, y, 16, 16, score->client, headAngles );
+;315:	}
+;316:
+;317:#ifdef MISSIONPACK
+;318:	// draw the team task
+;319:	if ( ci->teamTask != TEAMTASK_NONE ) {
+;320:		if ( ci->teamTask == TEAMTASK_OFFENSE ) {
+;321:			CG_DrawPic( headx + 48, y, 16, 16, cgs.media.assaultShader );
+;322:		}
+;323:		else if ( ci->teamTask == TEAMTASK_DEFENSE ) {
+;324:			CG_DrawPic( headx + 48, y, 16, 16, cgs.media.defendShader );
+;325:		}
+;326:	}
+;327:#endif
+;328:	// draw the score line
+;329:	if ( score->ping == -1 ) {
+;330:		BG_sprintf( string, " connecting" );
+;331:	} else if ( ci->team == TEAM_SPECTATOR ) {
+;332:		BG_sprintf( string, " SPECT %3i %4i", score->ping, score->time );
+;333:	} else {
+;334:		BG_sprintf( string, "%5i %4i %4i", score->score, score->ping, score->time );
+;335:	}
+;336:
+;337:	// highlight your position
+;338:	if ( score->client == cg.snap->ps.clientNum ) {
+;339:		float	hcolor[4];
+;340:		int		rank;
+;341:
+;342:		localClient = qtrue;
+;343:
+;344:		if ( cg.snap->ps.persistant[PERS_TEAM] == TEAM_SPECTATOR 
+;345:			|| cgs.gametype >= GT_TEAM ) {
+;346:			rank = -1;
+;347:		} else {
+;348:			rank = cg.snap->ps.persistant[PERS_RANK] & ~RANK_TIED_FLAG;
+;349:		}
+;350:		if ( rank == 0 ) {
+;351:			hcolor[0] = 0;
+;352:			hcolor[1] = 0;
+;353:			hcolor[2] = 0.7f;
+;354:		} else if ( rank == 1 ) {
+;355:			hcolor[0] = 0.7f;
+;356:			hcolor[1] = 0;
+;357:			hcolor[2] = 0;
+;358:		} else if ( rank == 2 ) {
+;359:			hcolor[0] = 0.7f;
+;360:			hcolor[1] = 0.7f;
+;361:			hcolor[2] = 0;
+;362:		} else {
+;363:			hcolor[0] = 0.7f;
+;364:			hcolor[1] = 0.7f;
+;365:			hcolor[2] = 0.7f;
+;366:		}
+;367:
+;368:		hcolor[3] = fade * 0.7;
+;369:		CG_FillRect( SB_SCORELINE_X + BIGCHAR_WIDTH + (SB_RATING_WIDTH / 2), y, 
+;370:			640 - SB_SCORELINE_X - BIGCHAR_WIDTH - (SB_RATING_WIDTH/2),
+;371:			BIGCHAR_HEIGHT+1, hcolor );
+;372:	}
+;373:
+;374:	VectorSet( c, 1, 1, 1 );
+;375:	c[3] = fade;
+;376:	// score
+;377:	CG_DrawString( SB_SCORELINE_X + (SB_RATING_WIDTH / 2), y, string, c, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW );
+;378:	// name
+;379:	CG_DrawString( SB_SCORELINE_X + (SB_RATING_WIDTH / 2) + BIGCHAR_WIDTH*16, y, ci->name, c, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_PROPORTIONAL );
+;380:
+;381:	// add the "ready" marker for intermission exiting
+;382:	if ( cg.snap->ps.stats[ STAT_CLIENTS_READY ] & ( 1 << score->client ) ) {
+;383:		CG_DrawString( iconx, y, "READY", color, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_FORCE_COLOR );
+;384:	}
+;385:
+;386:	// set bounds for scoreboard clicks
+;387:	score->minx = SB_SCORELINE_X;
+;388:	score->maxx = SCREEN_WIDTH - 8;
+;389:	score->miny = y;
+;390:	score->maxy = y + BIGCHAR_HEIGHT;
+;391:	if ( largeFormat )
+;392:	{
+;393:		score->miny -= ( ICON_SIZE - BIGCHAR_HEIGHT ) / 2;
+;394:		score->maxy += ( ICON_SIZE - BIGCHAR_HEIGHT ) / 2;
+;395:	}
+;396:}
+;397:#endif
+;398:
+;399:/*
+;400:=================
+;401:CG_ScoreboardClick
+;402:=================
+;403:*/
+;404:void CG_ScoreboardClick( void )
+;405:{
+line 409
+;406:	score_t	*score;
+;407:	int i;
+;408:
+;409:	if ( cg.intermissionStarted )
+ADDRGP4 cg+24
+INDIRI4
+CNSTI4 0
+EQI4 $160
+line 410
+;410:		return;
+ADDRGP4 $159
+JUMPV
+LABELV $160
+line 412
+;411:
+;412:	if ( !cg.snap || cg.snap->ps.pm_type == PM_INTERMISSION )
+ADDRGP4 cg+36
+INDIRP4
+CVPU4 4
+CNSTU4 0
+EQU4 $167
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 48
+ADDP4
+INDIRI4
+CNSTI4 5
+NEI4 $163
+LABELV $167
+line 413
+;413:		return;
+ADDRGP4 $159
+JUMPV
+LABELV $163
+line 415
+;414:
+;415:	score = cg.scores;
+ADDRLP4 0
+ADDRGP4 cg+110492
+ASGNP4
+line 416
+;416:	for ( i = 0; i < cg.numScores; i++, score++ ) {
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+ADDRGP4 $172
+JUMPV
+LABELV $169
+line 417
+;417:		if ( score->team >= TEAM_SPECTATOR ) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 56
+ADDP4
+INDIRI4
+CNSTI4 3
+LTI4 $174
+line 418
+;418:			continue;
+ADDRGP4 $170
+JUMPV
+LABELV $174
+line 420
+;419:		}
+;420:		if ( cgs.cursorX < score->minx || cgs.cursorX > score->maxx )
+ADDRGP4 cgs+149836
+INDIRF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 60
+ADDP4
+INDIRI4
+CVIF4 4
+LTF4 $180
+ADDRGP4 cgs+149836
+INDIRF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 64
+ADDP4
+INDIRI4
+CVIF4 4
+LEF4 $176
+LABELV $180
+line 421
+;421:			continue;
+ADDRGP4 $170
+JUMPV
+LABELV $176
+line 422
+;422:		if ( cgs.cursorY < score->miny || cgs.cursorY > score->maxy )
+ADDRGP4 cgs+149840
+INDIRF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+CVIF4 4
+LTF4 $185
+ADDRGP4 cgs+149840
+INDIRF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 72
+ADDP4
+INDIRI4
+CVIF4 4
+LEF4 $181
+LABELV $185
+line 423
+;423:			continue;
+ADDRGP4 $170
+JUMPV
+LABELV $181
+line 424
+;424:		if ( !cgs.clientinfo[ score->client ].infoValid ) {
+ADDRLP4 0
+INDIRP4
+INDIRI4
+CNSTI4 1652
+MULI4
+ADDRGP4 cgs+40996
+ADDP4
+INDIRI4
+CNSTI4 0
+NEI4 $186
+line 425
+;425:			continue;
+ADDRGP4 $170
+JUMPV
+LABELV $186
+line 428
+;426:		}
+;427:
+;428:		if ( !cg.demoPlayback ) {
+ADDRGP4 cg+8
+INDIRI4
+CNSTI4 0
+NEI4 $189
+line 429
+;429:			trap_SendClientCommand( va( "follow %i", score->client ) );
+ADDRGP4 $192
+ARGP4
+ADDRLP4 0
+INDIRP4
+INDIRI4
+ARGI4
+ADDRLP4 16
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRGP4 trap_SendClientCommand
+CALLV
+pop
+line 430
+;430:		}
+LABELV $189
+line 431
+;431:	}
+LABELV $170
+line 416
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+ADDRLP4 0
+ADDRLP4 0
+INDIRP4
+CNSTI4 76
+ADDP4
+ASGNP4
+LABELV $172
+ADDRLP4 4
+INDIRI4
+ADDRGP4 cg+110476
+INDIRI4
+LTI4 $169
+line 432
+;432:}
+LABELV $159
+endproc CG_ScoreboardClick 20 8
+proc CG_TeamScoreboard 48 20
+line 440
+;433:
+;434:
+;435:/*
+;436:=================
+;437:CG_TeamScoreboard
+;438:=================
+;439:*/
+;440:static int CG_TeamScoreboard( int y, team_t team, float fade, int maxClients, int lineHeight ) {
+line 447
+;441:	int		i;
+;442:	score_t	*score;
+;443:	float	color[4];
+;444:	int		count;
+;445:	clientInfo_t	*ci;
+;446:
+;447:	color[0] = color[1] = color[2] = 1.0;
+ADDRLP4 32
+CNSTF4 1065353216
+ASGNF4
+ADDRLP4 16+8
+ADDRLP4 32
+INDIRF4
+ASGNF4
+ADDRLP4 16+4
+ADDRLP4 32
+INDIRF4
+ASGNF4
+ADDRLP4 16
+ADDRLP4 32
+INDIRF4
+ASGNF4
+line 448
+;448:	color[3] = fade;
+ADDRLP4 16+12
+ADDRFP4 8
+INDIRF4
+ASGNF4
+line 450
+;449:
+;450:	count = 0;
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+line 451
+;451:	for ( i = 0 ; i < cg.numScores && count < maxClients ; i++ ) {
+ADDRLP4 4
+CNSTI4 0
+ASGNI4
+ADDRGP4 $200
+JUMPV
+LABELV $197
+line 452
+;452:		score = &cg.scores[i];
+ADDRLP4 8
+ADDRLP4 4
+INDIRI4
+CNSTI4 76
+MULI4
+ADDRGP4 cg+110492
+ADDP4
+ASGNP4
+line 453
+;453:		ci = &cgs.clientinfo[ score->client ];
+ADDRLP4 12
+ADDRLP4 8
+INDIRP4
+INDIRI4
+CNSTI4 1652
+MULI4
+ADDRGP4 cgs+40996
+ADDP4
+ASGNP4
+line 455
+;454:
+;455:		if ( team != ci->team || !ci->infoValid ) {
+ADDRFP4 4
+INDIRI4
+ADDRLP4 12
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRI4
+NEI4 $206
+ADDRLP4 12
+INDIRP4
+INDIRI4
+CNSTI4 0
+NEI4 $204
+LABELV $206
+line 456
+;456:			continue;
+ADDRGP4 $198
+JUMPV
+LABELV $204
+line 459
+;457:		}
+;458:
+;459:		CG_DrawClientScore( y + lineHeight * count, score, color, fade, lineHeight == SB_NORMAL_HEIGHT );
+ADDRLP4 44
+ADDRFP4 16
+INDIRI4
+ASGNI4
+ADDRFP4 0
+INDIRI4
+ADDRLP4 44
+INDIRI4
+ADDRLP4 0
+INDIRI4
+MULI4
+ADDI4
+ARGI4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+ARGP4
+ADDRFP4 8
+INDIRF4
+ARGF4
+ADDRLP4 44
+INDIRI4
+CNSTI4 40
+NEI4 $208
+ADDRLP4 40
+CNSTI4 1
+ASGNI4
+ADDRGP4 $209
+JUMPV
+LABELV $208
+ADDRLP4 40
+CNSTI4 0
+ASGNI4
+LABELV $209
+ADDRLP4 40
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawClientScore
+CALLV
+pop
+line 461
+;460:
+;461:		count++;
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+line 462
+;462:	}
+LABELV $198
+line 451
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $200
+ADDRLP4 4
+INDIRI4
+ADDRGP4 cg+110476
+INDIRI4
+GEI4 $210
+ADDRLP4 0
+INDIRI4
+ADDRFP4 12
+INDIRI4
+LTI4 $197
+LABELV $210
+line 464
+;463:
+;464:	return count;
+ADDRLP4 0
+INDIRI4
+RETI4
+LABELV $193
+endproc CG_TeamScoreboard 48 20
+export CG_DrawOldScoreboard
+proc CG_DrawOldScoreboard 52 32
+line 474
+;465:}
+;466:
+;467:/*
+;468:=================
+;469:CG_DrawScoreboard
+;470:
+;471:Draw the normal in-game scoreboard
+;472:=================
+;473:*/
+;474:qboolean CG_DrawOldScoreboard( void ) {
+line 484
+;475:	int			y, i, n1, n2;
+;476:	float		fade;
+;477:	float		*fadeColor;
+;478:	char		*s;
+;479:	int			maxClients;
+;480:	int			lineHeight;
+;481:	int			topBorderSize, bottomBorderSize;
+;482:
+;483:	// don't draw anything if the menu or console is up
+;484:	if ( cg_paused.integer ) {
+ADDRGP4 cg_paused+12
+INDIRI4
+CNSTI4 0
+EQI4 $212
+line 485
+;485:		cg.deferredPlayerLoading = 0;
+ADDRGP4 cg+16
+CNSTI4 0
+ASGNI4
+line 486
+;486:		return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $211
+JUMPV
+LABELV $212
+line 489
+;487:	}
+;488:
+;489:	if ( cgs.gametype == GT_SINGLE_PLAYER && cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 2
+NEI4 $216
+ADDRGP4 cg+107636+4
+INDIRI4
+CNSTI4 5
+NEI4 $216
+line 490
+;490:		cg.deferredPlayerLoading = 0;
+ADDRGP4 cg+16
+CNSTI4 0
+ASGNI4
+line 491
+;491:		return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $211
+JUMPV
+LABELV $216
+line 495
+;492:	}
+;493:
+;494:	// don't draw scoreboard during death while warmup up
+;495:	if ( cg.warmup && !cg.showScores ) {
+ADDRGP4 cg+117848
+INDIRI4
+CNSTI4 0
+EQI4 $222
+ADDRGP4 cg+115356
+INDIRI4
+CNSTI4 0
+NEI4 $222
+line 496
+;496:		return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $211
+JUMPV
+LABELV $222
+line 499
+;497:	}
+;498:
+;499:	if ( cg.showScores || cg.predictedPlayerState.pm_type == PM_DEAD ||
+ADDRGP4 cg+115356
+INDIRI4
+CNSTI4 0
+NEI4 $234
+ADDRGP4 cg+107636+4
+INDIRI4
+CNSTI4 3
+EQI4 $234
+ADDRGP4 cg+107636+4
+INDIRI4
+CNSTI4 5
+NEI4 $226
+LABELV $234
+line 500
+;500:		 cg.predictedPlayerState.pm_type == PM_INTERMISSION ) {
+line 501
+;501:		fade = 1.0;
+ADDRLP4 12
+CNSTF4 1065353216
+ASGNF4
+line 502
+;502:		fadeColor = colorWhite;
+ADDRLP4 16
+ADDRGP4 colorWhite
+ASGNP4
+line 503
+;503:	} else {
+ADDRGP4 $227
+JUMPV
+LABELV $226
+line 505
+;504:#ifdef NEOHUD
+;505:		fadeColor = CG_FadeColor( cg.scoreFadeTime, FADE_TIME, colorWhite );
+ADDRGP4 cg+115364
+INDIRI4
+ARGI4
+CNSTI4 200
+ARGI4
+ADDRGP4 colorWhite
+ARGP4
+ADDRLP4 44
+ADDRGP4 CG_FadeColor
+CALLP4
+ASGNP4
+ADDRLP4 16
+ADDRLP4 44
+INDIRP4
+ASGNP4
+line 509
+;506:#else
+;507:		fadeColor = CG_FadeColor( cg.scoreFadeTime, FADE_TIME );
+;508:#endif
+;509:		if ( !fadeColor ) {
+ADDRLP4 16
+INDIRP4
+CVPU4 4
+CNSTU4 0
+NEU4 $236
+line 511
+;510:			// next time scoreboard comes up, don't print killer
+;511:			cg.deferredPlayerLoading = 0;
+ADDRGP4 cg+16
+CNSTI4 0
+ASGNI4
+line 512
+;512:			cg.killerName[0] = 0;
+ADDRGP4 cg+115368
+CNSTI1 0
+ASGNI1
+line 513
+;513:			return qfalse;
+CNSTI4 0
+RETI4
+ADDRGP4 $211
+JUMPV
+LABELV $236
+line 515
+;514:		}
+;515:		fade = fadeColor[3];
+ADDRLP4 12
+ADDRLP4 16
+INDIRP4
+CNSTI4 12
+ADDP4
+INDIRF4
+ASGNF4
+line 516
+;516:	}
+LABELV $227
+line 519
+;517:
+;518:	// fragged by ... line
+;519:	if ( cg.killerName[0] ) {
+ADDRGP4 cg+115368
+INDIRI1
+CVII4 1
+CNSTI4 0
+EQI4 $240
+line 520
+;520:		s = va( "Fragged by %s", cg.killerName );
+ADDRGP4 $243
+ARGP4
+ADDRGP4 cg+115368
+ARGP4
+ADDRLP4 44
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+ADDRLP4 44
+INDIRP4
+ASGNP4
+line 521
+;521:		CG_DrawString( 320, 40, s, fadeColor, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL );
+CNSTF4 1134559232
+ARGF4
+CNSTF4 1109393408
+ARGF4
+ADDRLP4 32
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 13
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 522
+;522:	}
+LABELV $240
+line 525
+;523:
+;524:	// current rank
+;525:	if ( cgs.gametype < GT_TEAM) {
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 3
+GEI4 $245
+line 526
+;526:		if (cg.snap->ps.persistant[PERS_TEAM] != TEAM_SPECTATOR ) {
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 304
+ADDP4
+INDIRI4
+CNSTI4 3
+EQI4 $246
+line 527
+;527:			s = va( "%s place with %i",
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 300
+ADDP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 CG_PlaceString
+CALLP4
+ASGNP4
+ADDRGP4 $251
+ARGP4
+ADDRLP4 44
+INDIRP4
+ARGP4
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 292
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 48
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+ADDRLP4 48
+INDIRP4
+ASGNP4
+line 531
+;528:				CG_PlaceString( cg.snap->ps.persistant[PERS_RANK] + 1 ),
+;529:				cg.snap->ps.persistant[PERS_SCORE] );
+;530:
+;531:			CG_DrawString( 320, 60, s, fadeColor, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL );
+CNSTF4 1134559232
+ARGF4
+CNSTF4 1114636288
+ARGF4
+ADDRLP4 32
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 13
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 532
+;532:		}
+line 533
+;533:	} else {
+ADDRGP4 $246
+JUMPV
+LABELV $245
+line 534
+;534:		if ( cg.teamScores[0] == cg.teamScores[1] ) {
+ADDRGP4 cg+110484
+INDIRI4
+ADDRGP4 cg+110484+4
+INDIRI4
+NEI4 $254
+line 535
+;535:			s = va("Teams are tied at %i", cg.teamScores[0] );
+ADDRGP4 $259
+ARGP4
+ADDRGP4 cg+110484
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+ADDRLP4 44
+INDIRP4
+ASGNP4
+line 536
+;536:		} else if ( cg.teamScores[0] >= cg.teamScores[1] ) {
+ADDRGP4 $255
+JUMPV
+LABELV $254
+ADDRGP4 cg+110484
+INDIRI4
+ADDRGP4 cg+110484+4
+INDIRI4
+LTI4 $261
+line 537
+;537:			s = va("Red leads %i to %i",cg.teamScores[0], cg.teamScores[1] );
+ADDRGP4 $266
+ARGP4
+ADDRGP4 cg+110484
+INDIRI4
+ARGI4
+ADDRGP4 cg+110484+4
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+ADDRLP4 44
+INDIRP4
+ASGNP4
+line 538
+;538:		} else {
+ADDRGP4 $262
+JUMPV
+LABELV $261
+line 539
+;539:			s = va("Blue leads %i to %i",cg.teamScores[1], cg.teamScores[0] );
+ADDRGP4 $270
+ARGP4
+ADDRGP4 cg+110484+4
+INDIRI4
+ARGI4
+ADDRGP4 cg+110484
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 32
+ADDRLP4 44
+INDIRP4
+ASGNP4
+line 540
+;540:		}
+LABELV $262
+LABELV $255
+line 542
+;541:
+;542:		CG_DrawString( 320, 60, s, fadeColor, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, 0, DS_SHADOW | DS_CENTER | DS_PROPORTIONAL );
+CNSTF4 1134559232
+ARGF4
+CNSTF4 1114636288
+ARGF4
+ADDRLP4 32
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+CNSTF4 1098907648
+ARGF4
+CNSTF4 1098907648
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 13
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 543
+;543:	}
+LABELV $246
+line 546
+;544:
+;545:	// scoreboard
+;546:	y = SB_HEADER;
+ADDRLP4 4
+CNSTI4 86
+ASGNI4
+line 548
+;547:
+;548:	CG_DrawPic( SB_SCORE_X + (SB_RATING_WIDTH / 2), y, 64, 32, cgs.media.scoreboardScore );
+CNSTF4 1127219200
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1115684864
+ARGF4
+CNSTF4 1107296256
+ARGF4
+ADDRGP4 cgs+148752+504
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawPic
+CALLV
+pop
+line 549
+;549:	CG_DrawPic( SB_PING_X - (SB_RATING_WIDTH / 2), y, 64, 32, cgs.media.scoreboardPing );
+CNSTF4 1132724224
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1115684864
+ARGF4
+CNSTF4 1107296256
+ARGF4
+ADDRGP4 cgs+148752+500
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawPic
+CALLV
+pop
+line 550
+;550:	CG_DrawPic( SB_TIME_X - (SB_RATING_WIDTH / 2), y, 64, 32, cgs.media.scoreboardTime );
+CNSTF4 1135345664
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1115684864
+ARGF4
+CNSTF4 1107296256
+ARGF4
+ADDRGP4 cgs+148752+508
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawPic
+CALLV
+pop
+line 551
+;551:	CG_DrawPic( SB_NAME_X - (SB_RATING_WIDTH / 2), y, 64, 32, cgs.media.scoreboardName );
+CNSTF4 1137704960
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTF4 1115684864
+ARGF4
+CNSTF4 1107296256
+ARGF4
+ADDRGP4 cgs+148752+496
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawPic
+CALLV
+pop
+line 553
+;552:
+;553:	y = SB_TOP;
+ADDRLP4 4
+CNSTI4 118
+ASGNI4
+line 556
+;554:
+;555:	// If there are more than SB_MAXCLIENTS_NORMAL, use the interleaved scores
+;556:	if ( cg.numScores > SB_MAXCLIENTS_NORMAL ) {
+ADDRGP4 cg+110476
+INDIRI4
+CNSTI4 7
+LEI4 $282
+line 557
+;557:		maxClients = SB_MAXCLIENTS_INTER;
+ADDRLP4 24
+CNSTI4 17
+ASGNI4
+line 558
+;558:		lineHeight = SB_INTER_HEIGHT;
+ADDRLP4 8
+CNSTI4 16
+ASGNI4
+line 559
+;559:		topBorderSize = 8;
+ADDRLP4 36
+CNSTI4 8
+ASGNI4
+line 560
+;560:		bottomBorderSize = 16;
+ADDRLP4 40
+CNSTI4 16
+ASGNI4
+line 561
+;561:	} else {
+ADDRGP4 $283
+JUMPV
+LABELV $282
+line 562
+;562:		maxClients = SB_MAXCLIENTS_NORMAL;
+ADDRLP4 24
+CNSTI4 7
+ASGNI4
+line 563
+;563:		lineHeight = SB_NORMAL_HEIGHT;
+ADDRLP4 8
+CNSTI4 40
+ASGNI4
+line 564
+;564:		topBorderSize = 16;
+ADDRLP4 36
+CNSTI4 16
+ASGNI4
+line 565
+;565:		bottomBorderSize = 16;
+ADDRLP4 40
+CNSTI4 16
+ASGNI4
+line 566
+;566:	}
+LABELV $283
+line 568
+;567:
+;568:	localClient = qfalse;
+ADDRGP4 localClient
+CNSTI4 0
+ASGNI4
+line 570
+;569:
+;570:	if ( cgs.gametype >= GT_TEAM ) {
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 3
+LTI4 $285
+line 574
+;571:		//
+;572:		// teamplay scoreboard
+;573:		//
+;574:		y += lineHeight/2;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 8
+INDIRI4
+CNSTI4 2
+DIVI4
+ADDI4
+ASGNI4
+line 576
+;575:
+;576:		if ( cg.teamScores[0] >= cg.teamScores[1] ) {
+ADDRGP4 cg+110484
+INDIRI4
+ADDRGP4 cg+110484+4
+INDIRI4
+LTI4 $288
+line 577
+;577:			n1 = CG_TeamScoreboard( y, TEAM_RED, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 1
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 20
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 578
+;578:			CG_DrawTeamBackground( 0, y - topBorderSize, 640, n1 * lineHeight + bottomBorderSize, 0.33f, TEAM_RED );
+CNSTI4 0
+ARGI4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 36
+INDIRI4
+SUBI4
+ARGI4
+CNSTI4 640
+ARGI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+ADDRLP4 40
+INDIRI4
+ADDI4
+ARGI4
+CNSTF4 1051260355
+ARGF4
+CNSTI4 1
+ARGI4
+ADDRGP4 CG_DrawTeamBackground
+CALLV
+pop
+line 579
+;579:			y += (n1 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 580
+;580:			maxClients -= n1;
+ADDRLP4 24
+ADDRLP4 24
+INDIRI4
+ADDRLP4 20
+INDIRI4
+SUBI4
+ASGNI4
+line 581
+;581:			n2 = CG_TeamScoreboard( y, TEAM_BLUE, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 48
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 28
+ADDRLP4 48
+INDIRI4
+ASGNI4
+line 582
+;582:			CG_DrawTeamBackground( 0, y - topBorderSize, 640, n2 * lineHeight + bottomBorderSize, 0.33f, TEAM_BLUE );
+CNSTI4 0
+ARGI4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 36
+INDIRI4
+SUBI4
+ARGI4
+CNSTI4 640
+ARGI4
+ADDRLP4 28
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+ADDRLP4 40
+INDIRI4
+ADDI4
+ARGI4
+CNSTF4 1051260355
+ARGF4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawTeamBackground
+CALLV
+pop
+line 583
+;583:			y += (n2 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 28
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 584
+;584:			maxClients -= n2;
+ADDRLP4 24
+ADDRLP4 24
+INDIRI4
+ADDRLP4 28
+INDIRI4
+SUBI4
+ASGNI4
+line 585
+;585:		} else {
+ADDRGP4 $289
+JUMPV
+LABELV $288
+line 586
+;586:			n1 = CG_TeamScoreboard( y, TEAM_BLUE, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 2
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 20
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 587
+;587:			CG_DrawTeamBackground( 0, y - topBorderSize, 640, n1 * lineHeight + bottomBorderSize, 0.33f, TEAM_BLUE );
+CNSTI4 0
+ARGI4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 36
+INDIRI4
+SUBI4
+ARGI4
+CNSTI4 640
+ARGI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+ADDRLP4 40
+INDIRI4
+ADDI4
+ARGI4
+CNSTF4 1051260355
+ARGF4
+CNSTI4 2
+ARGI4
+ADDRGP4 CG_DrawTeamBackground
+CALLV
+pop
+line 588
+;588:			y += (n1 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 589
+;589:			maxClients -= n1;
+ADDRLP4 24
+ADDRLP4 24
+INDIRI4
+ADDRLP4 20
+INDIRI4
+SUBI4
+ASGNI4
+line 590
+;590:			n2 = CG_TeamScoreboard( y, TEAM_RED, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 1
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 48
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 28
+ADDRLP4 48
+INDIRI4
+ASGNI4
+line 591
+;591:			CG_DrawTeamBackground( 0, y - topBorderSize, 640, n2 * lineHeight + bottomBorderSize, 0.33f, TEAM_RED );
+CNSTI4 0
+ARGI4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 36
+INDIRI4
+SUBI4
+ARGI4
+CNSTI4 640
+ARGI4
+ADDRLP4 28
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+ADDRLP4 40
+INDIRI4
+ADDI4
+ARGI4
+CNSTF4 1051260355
+ARGF4
+CNSTI4 1
+ARGI4
+ADDRGP4 CG_DrawTeamBackground
+CALLV
+pop
+line 592
+;592:			y += (n2 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 28
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 593
+;593:			maxClients -= n2;
+ADDRLP4 24
+ADDRLP4 24
+INDIRI4
+ADDRLP4 28
+INDIRI4
+SUBI4
+ASGNI4
+line 594
+;594:		}
+LABELV $289
+line 595
+;595:		n1 = CG_TeamScoreboard( y, TEAM_SPECTATOR, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 3
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 20
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 596
+;596:		y += (n1 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 598
+;597:
+;598:	} else {
+ADDRGP4 $286
+JUMPV
+LABELV $285
+line 602
+;599:		//
+;600:		// free for all scoreboard
+;601:		//
+;602:		n1 = CG_TeamScoreboard( y, TEAM_FREE, fade, maxClients, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 0
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 44
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 20
+ADDRLP4 44
+INDIRI4
+ASGNI4
+line 603
+;603:		y += (n1 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 20
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 604
+;604:		n2 = CG_TeamScoreboard( y, TEAM_SPECTATOR, fade, maxClients - n1, lineHeight );
+ADDRLP4 4
+INDIRI4
+ARGI4
+CNSTI4 3
+ARGI4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 24
+INDIRI4
+ADDRLP4 20
+INDIRI4
+SUBI4
+ARGI4
+ADDRLP4 8
+INDIRI4
+ARGI4
+ADDRLP4 48
+ADDRGP4 CG_TeamScoreboard
+CALLI4
+ASGNI4
+ADDRLP4 28
+ADDRLP4 48
+INDIRI4
+ASGNI4
+line 605
+;605:		y += (n2 * lineHeight) + BIGCHAR_HEIGHT;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+ADDRLP4 28
+INDIRI4
+ADDRLP4 8
+INDIRI4
+MULI4
+CNSTI4 16
+ADDI4
+ADDI4
+ASGNI4
+line 606
+;606:	}
+LABELV $286
+line 608
+;607:
+;608:	if (!localClient) {
+ADDRGP4 localClient
+INDIRI4
+CNSTI4 0
+NEI4 $293
+line 610
+;609:		// draw local client at the bottom
+;610:		for ( i = 0 ; i < cg.numScores ; i++ ) {
+ADDRLP4 0
+CNSTI4 0
+ASGNI4
+ADDRGP4 $298
+JUMPV
+LABELV $295
+line 611
+;611:			if ( cg.scores[i].client == cg.snap->ps.clientNum ) {
+ADDRLP4 0
+INDIRI4
+CNSTI4 76
+MULI4
+ADDRGP4 cg+110492
+ADDP4
+INDIRI4
+ADDRGP4 cg+36
+INDIRP4
+CNSTI4 184
+ADDP4
+INDIRI4
+NEI4 $300
+line 612
+;612:				CG_DrawClientScore( y, &cg.scores[i], fadeColor, fade, lineHeight == SB_NORMAL_HEIGHT );
+ADDRLP4 4
+INDIRI4
+ARGI4
+ADDRLP4 0
+INDIRI4
+CNSTI4 76
+MULI4
+ADDRGP4 cg+110492
+ADDP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 12
+INDIRF4
+ARGF4
+ADDRLP4 8
+INDIRI4
+CNSTI4 40
+NEI4 $306
+ADDRLP4 44
+CNSTI4 1
+ASGNI4
+ADDRGP4 $307
+JUMPV
+LABELV $306
+ADDRLP4 44
+CNSTI4 0
+ASGNI4
+LABELV $307
+ADDRLP4 44
+INDIRI4
+ARGI4
+ADDRGP4 CG_DrawClientScore
+CALLV
+pop
+line 613
+;613:				break;
+ADDRGP4 $297
+JUMPV
+LABELV $300
+line 615
+;614:			}
+;615:		}
+LABELV $296
+line 610
+ADDRLP4 0
+ADDRLP4 0
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+LABELV $298
+ADDRLP4 0
+INDIRI4
+ADDRGP4 cg+110476
+INDIRI4
+LTI4 $295
+LABELV $297
+line 616
+;616:	}
+LABELV $293
+line 619
+;617:
+;618:	// load any models that have been deferred
+;619:	if ( ++cg.deferredPlayerLoading > 10 ) {
+ADDRLP4 44
+ADDRGP4 cg+16
+ASGNP4
+ADDRLP4 48
+ADDRLP4 44
+INDIRP4
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+ADDRLP4 44
+INDIRP4
+ADDRLP4 48
+INDIRI4
+ASGNI4
+ADDRLP4 48
+INDIRI4
+CNSTI4 10
+LEI4 $308
+line 620
+;620:		CG_LoadDeferredPlayers();
+ADDRGP4 CG_LoadDeferredPlayers
+CALLV
+pop
+line 621
+;621:	}
+LABELV $308
+line 623
+;622:
+;623:	return qtrue;
+CNSTI4 1
+RETI4
+LABELV $211
+endproc CG_DrawOldScoreboard 52 32
+export CG_DrawOldTourneyScoreboard
+proc CG_DrawOldTourneyScoreboard 72 32
+line 636
+;624:}
+;625:
+;626://================================================================================
+;627:
+;628:
+;629:/*
+;630:=================
+;631:CG_DrawTourneyScoreboard
+;632:
+;633:Draw the oversize scoreboard for tournements
+;634:=================
+;635:*/
+;636:void CG_DrawOldTourneyScoreboard( void ) {
+line 646
+;637:	const char		*s;
+;638:	vec4_t			bgColor;
+;639:	float			*color;
+;640:	int				min, sec;
+;641:	clientInfo_t	*ci;
+;642:	int				y;
+;643:	int				i;
+;644:	int				charW, charH;
+;645:
+;646:	charW = GIANT_WIDTH;
+ADDRLP4 20
+CNSTI4 32
+ASGNI4
+line 647
+;647:	charH = GIANT_HEIGHT;
+ADDRLP4 24
+CNSTI4 48
+ASGNI4
+line 650
+;648:
+;649:	// request more scores regularly
+;650:	if ( cg.scoresRequestTime + 2000 < cg.time ) {
+ADDRGP4 cg+110472
+INDIRI4
+CNSTI4 2000
+ADDI4
+ADDRGP4 cg+107604
+INDIRI4
+GEI4 $312
+line 651
+;651:		cg.scoresRequestTime = cg.time;
+ADDRGP4 cg+110472
+ADDRGP4 cg+107604
+INDIRI4
+ASGNI4
+line 652
+;652:		trap_SendClientCommand( "score" );
+ADDRGP4 $318
+ARGP4
+ADDRGP4 trap_SendClientCommand
+CALLV
+pop
+line 653
+;653:	}
+LABELV $312
+line 656
+;654:
+;655:	// draw the dialog background
+;656:	bgColor[0] = bgColor[1] = bgColor[2] = 0.2f;
+ADDRLP4 52
+CNSTF4 1045220557
+ASGNF4
+ADDRLP4 28+8
+ADDRLP4 52
+INDIRF4
+ASGNF4
+ADDRLP4 28+4
+ADDRLP4 52
+INDIRF4
+ASGNF4
+ADDRLP4 28
+ADDRLP4 52
+INDIRF4
+ASGNF4
+line 657
+;657:	bgColor[3] = 1;
+ADDRLP4 28+12
+CNSTF4 1065353216
+ASGNF4
+line 658
+;658:	CG_FillScreen( bgColor );
+ADDRLP4 28
+ARGP4
+ADDRGP4 CG_FillScreen
+CALLV
+pop
+line 661
+;659:
+;660:	// print the mesage of the day
+;661:	s = CG_ConfigString( CS_MOTD );
+CNSTI4 4
+ARGI4
+ADDRLP4 56
+ADDRGP4 CG_ConfigString
+CALLP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 56
+INDIRP4
+ASGNP4
+line 662
+;662:	if ( !s[0] ) {
+ADDRLP4 8
+INDIRP4
+INDIRI1
+CVII4 1
+CNSTI4 0
+NEI4 $322
+line 663
+;663:		s = "Scoreboard";
+ADDRLP4 8
+ADDRGP4 $324
+ASGNP4
+line 664
+;664:	}
+LABELV $322
+line 667
+;665:
+;666:	// Get color from HUD file, or default color
+;667:	color = colorWhite;// CG_HUDColor(itm, colorWhite);
+ADDRLP4 16
+ADDRGP4 colorWhite
+ASGNP4
+line 669
+;668:	// print optional title
+;669:	CG_DrawString( 320, 8, s, color, charW, charH, 0, DS_SHADOW | DS_FORCE_COLOR | DS_CENTER | DS_PROPORTIONAL );
+CNSTF4 1134559232
+ARGF4
+CNSTF4 1090519040
+ARGF4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 15
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 672
+;670:
+;671:	// print server time
+;672:	sec = cg.time / 1000;
+ADDRLP4 44
+ADDRGP4 cg+107604
+INDIRI4
+CNSTI4 1000
+DIVI4
+ASGNI4
+line 673
+;673:	min = sec / 60;
+ADDRLP4 48
+ADDRLP4 44
+INDIRI4
+CNSTI4 60
+DIVI4
+ASGNI4
+line 674
+;674:	sec %= 60;
+ADDRLP4 44
+ADDRLP4 44
+INDIRI4
+CNSTI4 60
+MODI4
+ASGNI4
+line 676
+;675:
+;676:	s = va( "%i:%02i", min, sec );
+ADDRGP4 $326
+ARGP4
+ADDRLP4 48
+INDIRI4
+ARGI4
+ADDRLP4 44
+INDIRI4
+ARGI4
+ADDRLP4 60
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 60
+INDIRP4
+ASGNP4
+line 678
+;677:
+;678:	CG_DrawString( 320, 64, s, color, charW, charH, 0, DS_SHADOW | DS_FORCE_COLOR | DS_CENTER | DS_PROPORTIONAL );
+CNSTF4 1134559232
+ARGF4
+CNSTF4 1115684864
+ARGF4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 15
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 682
+;679:
+;680:	// print the two scores
+;681:
+;682:	y = 160;
+ADDRLP4 4
+CNSTI4 160
+ASGNI4
+line 683
+;683:	if ( cgs.gametype >= GT_TEAM ) {
+ADDRGP4 cgs+31480
+INDIRI4
+CNSTI4 3
+LTI4 $327
+line 687
+;684:		//
+;685:		// teamplay scoreboard
+;686:		//
+;687:		CG_DrawString( 8, y, "Red Team", color, charW, charH, 0, DS_SHADOW );
+CNSTF4 1090519040
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRGP4 $330
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 1
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 688
+;688:		s = va( "%i", cg.teamScores[0] );
+ADDRGP4 $104
+ARGP4
+ADDRGP4 cg+110484
+INDIRI4
+ARGI4
+ADDRLP4 64
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 64
+INDIRP4
+ASGNP4
+line 689
+;689:		CG_DrawString( 632, y, s, color, charW, charH, 0, DS_SHADOW | DS_RIGHT );
+CNSTF4 1142816768
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 17
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 691
+;690:		
+;691:		y += 64;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 64
+ADDI4
+ASGNI4
+line 693
+;692:
+;693:		CG_DrawString( 8, y, "Blue Team", color, charW, charH, 0, DS_SHADOW );
+CNSTF4 1090519040
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRGP4 $332
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 1
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 694
+;694:		s = va( "%i", cg.teamScores[1] );
+ADDRGP4 $104
+ARGP4
+ADDRGP4 cg+110484+4
+INDIRI4
+ARGI4
+ADDRLP4 68
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 68
+INDIRP4
+ASGNP4
+line 695
+;695:		CG_DrawString( 632, y, s, color, charW, charH, 0, DS_SHADOW | DS_RIGHT );
+CNSTF4 1142816768
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 17
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 697
+;696:
+;697:	} else {
+ADDRGP4 $328
+JUMPV
+LABELV $327
+line 701
+;698:		//
+;699:		// free for all scoreboard
+;700:		//
+;701:		for ( i = 0 ; i < MAX_CLIENTS ; i++ ) {
+ADDRLP4 12
+CNSTI4 0
+ASGNI4
+LABELV $335
+line 702
+;702:			ci = &cgs.clientinfo[i];
+ADDRLP4 0
+ADDRLP4 12
+INDIRI4
+CNSTI4 1652
+MULI4
+ADDRGP4 cgs+40996
+ADDP4
+ASGNP4
+line 703
+;703:			if ( !ci->infoValid ) {
+ADDRLP4 0
+INDIRP4
+INDIRI4
+CNSTI4 0
+NEI4 $340
+line 704
+;704:				continue;
+ADDRGP4 $336
+JUMPV
+LABELV $340
+line 706
+;705:			}
+;706:			if ( ci->team != TEAM_FREE ) {
+ADDRLP4 0
+INDIRP4
+CNSTI4 36
+ADDP4
+INDIRI4
+CNSTI4 0
+EQI4 $342
+line 707
+;707:				continue;
+ADDRGP4 $336
+JUMPV
+LABELV $342
+line 710
+;708:			}
+;709:
+;710:			CG_DrawString( 8, y, ci->name, color, charW, charH, 0, DS_SHADOW | DS_FORCE_COLOR | DS_PROPORTIONAL );
+CNSTF4 1090519040
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 0
+INDIRP4
+CNSTI4 4
+ADDP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 7
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 711
+;711:			s = va( "%i", ci->score );
+ADDRGP4 $104
+ARGP4
+ADDRLP4 0
+INDIRP4
+CNSTI4 68
+ADDP4
+INDIRI4
+ARGI4
+ADDRLP4 64
+ADDRGP4 va
+CALLP4
+ASGNP4
+ADDRLP4 8
+ADDRLP4 64
+INDIRP4
+ASGNP4
+line 712
+;712:			CG_DrawString( 632, y, s, color, charW, charH, 0, DS_SHADOW | DS_RIGHT );
+CNSTF4 1142816768
+ARGF4
+ADDRLP4 4
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 8
+INDIRP4
+ARGP4
+ADDRLP4 16
+INDIRP4
+ARGP4
+ADDRLP4 20
+INDIRI4
+CVIF4 4
+ARGF4
+ADDRLP4 24
+INDIRI4
+CVIF4 4
+ARGF4
+CNSTI4 0
+ARGI4
+CNSTI4 17
+ARGI4
+ADDRGP4 CG_DrawString
+CALLV
+pop
+line 713
+;713:			y += 64;
+ADDRLP4 4
+ADDRLP4 4
+INDIRI4
+CNSTI4 64
+ADDI4
+ASGNI4
+line 714
+;714:		}
+LABELV $336
+line 701
+ADDRLP4 12
+ADDRLP4 12
+INDIRI4
+CNSTI4 1
+ADDI4
+ASGNI4
+ADDRLP4 12
+INDIRI4
+CNSTI4 64
+LTI4 $335
+line 715
+;715:	}
+LABELV $328
+line 716
+;716:}
+LABELV $311
+endproc CG_DrawOldTourneyScoreboard 72 32
+bss
+align 4
+LABELV localClient
+skip 4
+import trap_R_AddLinearLightToScene
+import trap_R_AddRefEntityToScene2
+import linearLight
+import intShaderTime
+import CG_NewParticleArea
+import initparticles
+import CG_ParticleExplosion
+import CG_ParticleMisc
+import CG_ParticleDust
+import CG_ParticleSparks
+import CG_ParticleBulletDebris
+import CG_ParticleSnowFlurry
+import CG_AddParticleShrapnel
+import CG_ParticleSmoke
+import CG_ParticleSnow
+import CG_AddParticles
+import CG_ClearParticles
+import trap_GetEntityToken
+import trap_getCameraInfo
+import trap_startCamera
+import trap_loadCamera
+import trap_SnapVector
+import trap_CIN_SetExtents
+import trap_CIN_DrawCinematic
+import trap_CIN_RunCinematic
+import trap_CIN_StopCinematic
+import trap_CIN_PlayCinematic
+import trap_Key_GetKey
+import trap_Key_SetCatcher
+import trap_Key_GetCatcher
+import trap_Key_IsDown
+import trap_R_RegisterFont
+import trap_MemoryRemaining
+import testPrintFloat
+import testPrintInt
+import trap_SetUserCmdValue
+import trap_GetUserCmd
+import trap_GetCurrentCmdNumber
+import trap_GetServerCommand
+import trap_GetSnapshot
+import trap_GetCurrentSnapshotNumber
+import trap_GetGameState
+import trap_GetGlconfig
+import trap_R_inPVS
+import trap_R_RemapShader
+import trap_R_LerpTag
+import trap_R_ModelBounds
+import trap_R_DrawStretchPic
+import trap_R_SetColor
+import trap_R_RenderScene
+import trap_R_LightForPoint
+import trap_R_AddAdditiveLightToScene
+import trap_R_AddLightToScene
+import trap_R_AddPolysToScene
+import trap_R_AddPolyToScene
+import trap_R_AddRefEntityToScene
+import trap_R_ClearScene
+import trap_R_RegisterShaderNoMip
+import trap_R_RegisterShader
+import trap_R_RegisterSkin
+import trap_R_RegisterModel
+import trap_R_LoadWorldMap
+import trap_S_StopBackgroundTrack
+import trap_S_StartBackgroundTrack
+import trap_S_RegisterSound
+import trap_S_Respatialize
+import trap_S_UpdateEntityPosition
+import trap_S_AddRealLoopingSound
+import trap_S_AddLoopingSound
+import trap_S_ClearLoopingSounds
+import trap_S_StartLocalSound
+import trap_S_StopLoopingSound
+import trap_S_StartSound
+import trap_CM_MarkFragments
+import trap_CM_TransformedCapsuleTrace
+import trap_CM_TransformedBoxTrace
+import trap_CM_CapsuleTrace
+import trap_CM_BoxTrace
+import trap_CM_TransformedPointContents
+import trap_CM_PointContents
+import trap_CM_TempBoxModel
+import trap_CM_InlineModel
+import trap_CM_NumInlineModels
+import trap_CM_LoadMap
+import trap_UpdateScreen
+import trap_SendClientCommand
+import trap_RemoveCommand
+import trap_AddCommand
+import trap_RealTime
+import trap_SendConsoleCommand
+import trap_FS_Seek
+import trap_FS_FCloseFile
+import trap_FS_Write
+import trap_FS_Read
+import trap_FS_FOpenFile
+import trap_Args
+import trap_Argv
+import trap_Argc
+import trap_Cvar_VariableStringBuffer
+import trap_Cvar_Set
+import trap_Cvar_Update
+import trap_Cvar_Register
+import trap_Milliseconds
+import trap_Error
+import trap_Print
+import CG_CheckChangedPredictableEvents
+import CG_TransitionPlayerState
+import CG_Respawn
+import CG_PlayBufferedVoiceChats
+import CG_VoiceChatLocal
+import CG_LoadVoiceChats
+import CG_ShaderStateChanged
+import CG_SetConfigValues
+import CG_ParseSysteminfo
+import CG_ParseServerinfo
+import CG_ExecuteNewServerCommands
+import CG_InitConsoleCommands
+import CG_ConsoleCommand
+import CG_DrawInformation
+import CG_LoadingClient
+import CG_LoadingItem
+import CG_LoadingString
+import CG_ProcessSnapshots
+import CG_MakeExplosion
+import CG_Bleed
+import CG_BigExplode
+import CG_GibPlayer
+import CG_ScorePlum
+import CG_SpawnEffect
+import CG_BubbleTrail
+import CG_SmokePuff
+import CG_AddLocalEntities
+import CG_AllocLocalEntity
+import CG_InitLocalEntities
+import CG_ImpactMark
+import CG_AddMarks
+import CG_InitMarkPolys
+import CG_OutOfAmmoChange
+import CG_DrawWeaponSelect_V
+import CG_DrawWeaponSelect_H
+import CG_AddPlayerWeapon
+import CG_AddViewWeapon
+import CG_GrappleTrail
+import CG_RailTrail
+import CG_Bullet
+import CG_ShotgunFire
+import CG_MissileHitPlayer
+import CG_MissileHitWall
+import CG_FireWeapon
+import CG_RegisterItemVisuals
+import CG_RegisterWeapon
+import CG_Weapon_f
+import CG_PrevWeapon_f
+import CG_NextWeapon_f
+import CG_PositionRotatedEntityOnTag
+import CG_PositionEntityOnTag
+import CG_AdjustPositionForMover
+import CG_Beam
+import CG_AddPacketEntities
+import CG_SetEntitySoundPosition
+import CG_PainEvent
+import CG_EntityEvent
+import CG_PlaceString
+import CG_CheckEvents
+import CG_PlayDroppedEvents
+import CG_LoadDeferredPlayers
+import CG_PredictPlayerState
+import CG_Trace
+import CG_PointContents
+import CG_BuildSolidList
+import CG_CustomSound
+import CG_NewClientInfo
+import CG_AddRefEntityWithPowerups
+import CG_ResetPlayerEntity
+import CG_Player
+import CG_TrackClientTeamChange
+import CG_ForceModelChange
+import CG_ShowResponseHead
+import CG_CheckOrderPending
+import CG_OtherTeamHasFlag
+import CG_YourTeamHasFlag
+import CG_SelectNextPlayer
+import CG_SelectPrevPlayer
+import CG_Draw3DModel
+import CG_Text_Height
+import CG_Text_Width
+import CG_Text_Paint
+import CG_DrawTeamBackground
+import CG_DrawFlagModel
+import CG_DrawActive
+import CG_DrawHead
+import CG_CenterPrint
+import CG_AddLagometerSnapshotInfo
+import CG_AddLagometerFrameInfo
+import teamChat2
+import teamChat1
+import systemChat
+import drawTeamOverlayModificationCount
+import numSortedTeamPlayers
+import sortedTeamPlayers
+import CG_SelectFont
+import CG_LoadFonts
+import CG_DrawString
+import CG_DrawTopBottom
+import CG_DrawSides
+import CG_DrawRect
+import UI_DrawProportionalString
+import CG_GetColorForHealth
+import CG_ColorForHealth
+import CG_TileClear
+import CG_TeamColor
+import CG_FadeColorTime
+import CG_FadeColor
+import CG_DrawStrlen
+import CG_DrawStringExt
+import CG_DrawGradientPic
+import CG_DrawPic
+import CG_FillScreen
+import CG_FillRect
+import CG_AdjustFrom640
+import CG_DrawActiveFrame
+import CG_AddBufferedSound
+import CG_ZoomUp_f
+import CG_ZoomDown_f
+import CG_TestModelPrevSkin_f
+import CG_TestModelNextSkin_f
+import CG_TestModelPrevFrame_f
+import CG_TestModelNextFrame_f
+import CG_TestGun_f
+import CG_TestModel_f
+import CG_SetScoreCatcher
+import CG_BuildSpectatorString
+import CG_SetScoreSelection
+import CG_RankRunFrame
+import CG_EventHandling
+import CG_MouseEvent
+import CG_KeyEvent
+import CG_LoadMenus
+import CG_LastAttacker
+import CG_CrosshairPlayer
+import CG_UpdateCvars
+import CG_StartMusic
+import CG_Error
+import CG_Printf
+import CG_Argv
+import CG_ConfigString
+import eventnames
+import cg_followKiller
+import cg_fovAdjust
+import cg_deadBodyDarken
+import cg_teamColors
+import cg_teamModel
+import cg_enemyColors
+import cg_enemyModel
+import cg_hitSounds
+import cg_currentSelectedPlayer
+import cg_trueLightning
+import cg_oldPlasma
+import cg_oldRocket
+import cg_oldRail
+import cg_noProjectileTrail
+import cg_noTaunt
+import cg_bigFont
+import cg_smallFont
+import cg_cameraMode
+import cg_timescale
+import cg_timescaleFadeSpeed
+import cg_timescaleFadeEnd
+import cg_cameraOrbitDelay
+import cg_cameraOrbit
+import cg_smoothClients
+import cg_scorePlum
+import cg_noVoiceText
+import cg_noVoiceChats
+import cg_teamChatsOnly
+import cg_drawFriend
+import cg_deferPlayers
+import cg_predictItems
+import cg_blood
+import cg_paused
+import cg_buildScript
+import cg_forceModel
+import cg_stats
+import cg_teamChatHeight
+import cg_teamChatTime
+import cg_drawSpeed
+import cg_drawAttacker
+import cg_drawPing
+import cg_lagometer
+import cg_thirdPerson
+import cg_thirdPersonAngle
+import cg_thirdPersonRange
+import cg_zoomFov
+import cg_fov
+import cg_simpleItems
+import cg_ignore
+import cg_autoswitch
+import cg_tracerLength
+import cg_tracerWidth
+import cg_tracerChance
+import cg_viewsize
+import cg_drawGun
+import cg_gun_z
+import cg_gun_y
+import cg_gun_x
+import cg_gun_frame
+import cg_brassTime
+import cg_addMarks
+import cg_footsteps
+import cg_showmiss
+import cg_noPlayerAnims
+import cg_nopredict
+import cg_errorDecay
+import cg_railTrailRadius
+import cg_railTrailTime
+import cg_debugEvents
+import cg_debugPosition
+import cg_debugAnim
+import cg_animSpeed
+import cg_draw2D
+import cg_drawStatus
+import cg_crosshairHealth
+import cg_crosshairSize
+import cg_crosshairY
+import cg_crosshairX
+import cg_drawWeaponSelect
+import cg_teamOverlayUserinfo
+import cg_drawTeamOverlay
+import cg_drawRewards
+import cg_drawCrosshairNames
+import cg_drawCrosshair
+import cg_drawAmmoWarning
+import cg_drawIcons
+import cg_draw3dIcons
+import cg_drawSnapshot
+import cg_drawFPS
+import cg_drawTimer
+import cg_gibs
+import cg_shadows
+import cg_swingSpeed
+import cg_bobroll
+import cg_bobpitch
+import cg_bobup
+import cg_runroll
+import cg_runpitch
+import cg_centertime
+import cg_markPolys
+import cg_items
+import cg_weapons
+import cg_entities
+import cg
+import cgs
+import CG_DrawAttacker_icon
+import CG_DrawSelectedPlayerStatus
+import HUD_color
+import HUD_ItemCaptionValue
+import CG_DrawTeamPlayerPowerup
+import CG_Draw_Icon_Ammo
+import CG_Draw_Icon_Armor
+import CG_DrawStatusBarHead
+import playerTeam
+import getPlayerHealth
+import getPlayerLocation
+import getTeamPlayerName
+import HUD_Update_finalRect
+import HUD_DrawGradientBackground
+import HUD_DrawBackground
+import copyColor
+import HUD_Draw_Text
+import HUD_GradientValue
+import FPS
+import TeamOverlay_Sel_idx
+import ServerMsg_idx
+import ItemMsg_idx
+import Attacker_idx
+import KillMsg_idx
+import WarmFightMsg_idx
+import IcoPowerUp_idx
+import WeapListSelName_idx
+import IcoWeapListSel_idx
+import IcoWeapList_idx
+import HUD_Update_Valign
+import HUD_Update_Margin
+import HUD_Update_Anchors
+import CG_HUDItemVisible
+import CG_HUDShader
+import item_Keywords
+import dyn_itemCount
+import dyn_itemArray
+import itemCount
+import itemArray
+import CG_CheckHUD
+import String_Init
+import String_Alloc
+import teams_colors
+import ammo_colors
+import armor_colors
+import health_colors
+import BigEndian
+import replace1
+import Q_stradd
+import Q_strcpy
+import BG_StripColor
+import BG_CleanName
+import DecodedString
+import EncodedString
+import strtok
+import Q_stristr
+import BG_sprintf
+import BG_PlayerTouchesItem
+import BG_PlayerStateToEntityStateExtraPolate
+import BG_PlayerStateToEntityState
+import BG_TouchJumpPad
+import BG_AddPredictableEventToPlayerstate
+import BG_EvaluateTrajectoryDelta
+import BG_EvaluateTrajectory
+import BG_CanItemBeGrabbed
+import BG_FindItemForHoldable
+import BG_FindItemForPowerup
+import BG_FindItemForWeapon
+import BG_FindItem
+import bg_numItems
+import bg_itemlist
+import Pmove
+import PM_UpdateViewAngles
+import Com_Printf
+import Com_Error
+import Info_NextPair
+import Info_ValidateKeyValue
+import Info_Validate
+import Info_SetValueForKey_Big
+import Info_SetValueForKey
+import Info_ValueForKey
+import va
+import Q_CleanStr
+import Q_PrintStrlen
+import Q_strcat
+import Q_strncpyz
+import Q_strrchr
+import Q_strupr
+import Q_strlwr
+import Q_stricmpn
+import Q_strncmp
+import Q_stricmp
+import Q_isalpha
+import Q_isupper
+import Q_islower
+import Q_isprint
+import locase
+import trap_PC_FreeSource
+import trap_PC_LoadSource
+import trap_PC_ReadToken
+import trap_PC_SourceFileAndLine
+import Com_sprintf
+import Parse3DMatrix
+import Parse2DMatrix
+import Parse1DMatrix
+import SkipRestOfLine
+import SkipBracedSection
+import COM_MatchToken
+import Com_Split
+import COM_ParseSep
+import Com_InitSeparators
+import SkipTillSeparators
+import COM_ParseWarning
+import COM_ParseError
+import COM_Compress
+import COM_ParseExt
+import COM_Parse
+import COM_GetCurrentParseLine
+import COM_BeginParseSession
+import COM_DefaultExtension
+import COM_StripExtension
+import COM_SkipPath
+import Com_Clamp
+import PerpendicularVector
+import AngleVectors
+import MatrixMultiply
+import MakeNormalVectors
+import RotateAroundDirection
+import RotatePointAroundVector
+import ProjectPointOnPlane
+import PlaneFromPoints
+import AngleDelta
+import AngleNormalize180
+import AngleNormalize360
+import AnglesSubtract
+import AngleSubtract
+import LerpAngle
+import AngleMod
+import BoxOnPlaneSide
+import SetPlaneSignbits
+import AxisCopy
+import AxisClear
+import AnglesToAxis
+import vectoangles
+import Q_crandom
+import Q_random
+import Q_rand
+import Q_acos
+import Q_log2
+import VectorRotate
+import Vector4Scale
+import VectorNormalize2
+import VectorNormalize
+import CrossProduct
+import VectorInverse
+import VectorNormalizeFast
+import DistanceSquared
+import Distance
+import VectorLengthSquared
+import VectorLength
+import VectorCompare
+import AddPointToBounds
+import ClearBounds
+import RadiusFromBounds
+import NormalizeColor
+import ColorBytes4
+import ColorBytes3
+import _VectorMA
+import _VectorScale
+import _VectorCopy
+import _VectorAdd
+import _VectorSubtract
+import _DotProduct
+import ByteToDir
+import DirToByte
+import ClampShort
+import ClampChar
+import Q_rsqrt
+import Q_fabs
+import axisDefault
+import vec3_origin
+import g_color_table
+import colorDkGrey
+import colorMdGrey
+import colorLtGrey
+import colorWhite
+import colorCyan
+import colorMagenta
+import colorYellow
+import colorBlue
+import colorGreen
+import colorRed
+import colorBlack
+import bytedirs
+import Hunk_Alloc
+import acos
+import fabs
+import abs
+import tan
+import atan2
+import cos
+import sin
+import sqrt
+import floor
+import ceil
+import memcpy
+import memset
+import memmove
+import Q_sscanf
+import ED_vsprintf
+import atoi
+import atof
+import toupper
+import tolower
+import strncpy
+import strstr
+import strchr
+import strcmp
+import strcpy
+import strcat
+import strlen
+import rand
+import srand
+import qsort
+lit
+align 1
+LABELV $332
+byte 1 66
+byte 1 108
+byte 1 117
+byte 1 101
+byte 1 32
+byte 1 84
+byte 1 101
+byte 1 97
+byte 1 109
+byte 1 0
+align 1
+LABELV $330
+byte 1 82
+byte 1 101
+byte 1 100
+byte 1 32
+byte 1 84
+byte 1 101
+byte 1 97
+byte 1 109
+byte 1 0
+align 1
+LABELV $326
+byte 1 37
+byte 1 105
+byte 1 58
+byte 1 37
+byte 1 48
+byte 1 50
+byte 1 105
+byte 1 0
+align 1
+LABELV $324
+byte 1 83
+byte 1 99
+byte 1 111
+byte 1 114
+byte 1 101
+byte 1 98
+byte 1 111
+byte 1 97
+byte 1 114
+byte 1 100
+byte 1 0
+align 1
+LABELV $318
+byte 1 115
+byte 1 99
+byte 1 111
+byte 1 114
+byte 1 101
+byte 1 0
+align 1
+LABELV $270
+byte 1 66
+byte 1 108
+byte 1 117
+byte 1 101
+byte 1 32
+byte 1 108
+byte 1 101
+byte 1 97
+byte 1 100
+byte 1 115
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 32
+byte 1 116
+byte 1 111
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $266
+byte 1 82
+byte 1 101
+byte 1 100
+byte 1 32
+byte 1 108
+byte 1 101
+byte 1 97
+byte 1 100
+byte 1 115
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 32
+byte 1 116
+byte 1 111
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $259
+byte 1 84
+byte 1 101
+byte 1 97
+byte 1 109
+byte 1 115
+byte 1 32
+byte 1 97
+byte 1 114
+byte 1 101
+byte 1 32
+byte 1 116
+byte 1 105
+byte 1 101
+byte 1 100
+byte 1 32
+byte 1 97
+byte 1 116
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $251
+byte 1 37
+byte 1 115
+byte 1 32
+byte 1 112
+byte 1 108
+byte 1 97
+byte 1 99
+byte 1 101
+byte 1 32
+byte 1 119
+byte 1 105
+byte 1 116
+byte 1 104
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $243
+byte 1 70
+byte 1 114
+byte 1 97
+byte 1 103
+byte 1 103
+byte 1 101
+byte 1 100
+byte 1 32
+byte 1 98
+byte 1 121
+byte 1 32
+byte 1 37
+byte 1 115
+byte 1 0
+align 1
+LABELV $192
+byte 1 102
+byte 1 111
+byte 1 108
+byte 1 108
+byte 1 111
+byte 1 119
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $156
+byte 1 82
+byte 1 69
+byte 1 65
+byte 1 68
+byte 1 89
+byte 1 0
+align 1
+LABELV $125
+byte 1 37
+byte 1 53
+byte 1 105
+byte 1 32
+byte 1 37
+byte 1 52
+byte 1 105
+byte 1 32
+byte 1 37
+byte 1 52
+byte 1 105
+byte 1 0
+align 1
+LABELV $124
+byte 1 32
+byte 1 83
+byte 1 80
+byte 1 69
+byte 1 67
+byte 1 84
+byte 1 32
+byte 1 37
+byte 1 51
+byte 1 105
+byte 1 32
+byte 1 37
+byte 1 52
+byte 1 105
+byte 1 0
+align 1
+LABELV $121
+byte 1 32
+byte 1 99
+byte 1 111
+byte 1 110
+byte 1 110
+byte 1 101
+byte 1 99
+byte 1 116
+byte 1 105
+byte 1 110
+byte 1 103
+byte 1 0
+align 1
+LABELV $111
+byte 1 37
+byte 1 105
+byte 1 47
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $104
+byte 1 37
+byte 1 105
+byte 1 0
+align 1
+LABELV $82
+byte 1 66
+byte 1 97
+byte 1 100
+byte 1 32
+byte 1 115
+byte 1 99
+byte 1 111
+byte 1 114
+byte 1 101
+byte 1 45
+byte 1 62
+byte 1 99
+byte 1 108
+byte 1 105
+byte 1 101
+byte 1 110
+byte 1 116
+byte 1 58
+byte 1 32
+byte 1 37
+byte 1 105
+byte 1 10
+byte 1 0

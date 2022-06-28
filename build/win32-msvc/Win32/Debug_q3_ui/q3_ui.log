@@ -1,0 +1,61 @@
+﻿cl : Ligne de commande warning D9035: l'option 'Gm' est déconseillée et sera supprimée dans une version ultérieure
+  ui_video.c
+  ui_teamorders.c
+  ui_team.c
+  ui_syscalls.c
+  ui_startserver.c
+  ui_spskill.c
+  ui_spreset.c
+  ui_sppostgame.c
+  ui_splevel.c
+  ui_specifyserver.c
+  ui_sparena.c
+  ui_sound.c
+  ui_setup.c
+  ui_servers2.c
+  ui_serverinfo.c
+  ui_selecthud.c
+  ui_saveconfig.c
+  ui_removebots.c
+  ui_qmenu.c
+  ui_preferences.c
+  Génération de code en cours...
+  Compilation en cours...
+  ui_playersettings.c
+  ui_players.c
+  ui_playermodel.c
+  ui_options.c
+  ui_network.c
+  ui_mods.c
+  ui_mfield.c
+  ui_menu.c
+  ui_main.c
+  ui_loadconfig.c
+  ui_ingame.c
+  ui_HUDinfo.c
+  ui_gameinfo.c
+  ui_display.c
+  ui_demo2.c
+  ui_credits.c
+  ui_controls2.c
+  ui_connect.c
+  ui_confirm.c
+  ui_cinematics.c
+  Génération de code en cours...
+  Compilation en cours...
+  ui_cdkey.c
+  ui_atoms.c
+  ui_addbots.c
+  q_shared.c
+  q_math.c
+  bg_misc.c
+  bg_lib.c
+c:\travail\qvm_hud_clean\code\game\bg_lib.c(172): warning C4018: '<' : incompatibilité signed/unsigned
+c:\travail\qvm_hud_clean\code\game\bg_lib.c(174): warning C4018: '>' : incompatibilité signed/unsigned
+c:\travail\qvm_hud_clean\code\game\bg_lib.c(176): warning C4018: '>' : incompatibilité signed/unsigned
+  Génération de code en cours...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1216,5): warning MSB8012: TargetPath(C:\travail\qvm_HUD_clean\build\win32-msvc\.\Win32\Debug\q3_ui.dll) ne correspond pas à la valeur de la propriété OutputFile (C:\travail\qvm_HUD_clean\build\win32-msvc\Win32\Debug\uix86.dll) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1218,5): warning MSB8012: TargetName(q3_ui) ne correspond pas à la valeur de la propriété OutputFile (uix86) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+bg_lib.obj : warning LNK4075: ' /EDITANDCONTINUE' ignoré à cause de la spécification '/SAFESEH'
+     Création de la bibliothèque .\Win32\Debug\q3_ui.lib et de l'objet .\Win32\Debug\q3_ui.exp
+  q3_ui.vcxproj -> C:\travail\qvm_HUD_clean\build\win32-msvc\.\Win32\Debug\q3_ui.dll

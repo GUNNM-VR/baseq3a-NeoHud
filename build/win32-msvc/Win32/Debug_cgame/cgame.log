@@ -1,0 +1,8 @@
+﻿  cg_consolecmds.c
+  cg_draw.c
+  Génération de code en cours...
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1216,5): warning MSB8012: TargetPath(C:\travail\qvm_HUD\build\win32-msvc\.\Win32\Debug\cgame.dll) ne correspond pas à la valeur de la propriété OutputFile (C:\travail\qvm_HUD\build\win32-msvc\Win32\Debug\cgamex86.dll) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(1218,5): warning MSB8012: TargetName(cgame) ne correspond pas à la valeur de la propriété OutputFile (cgamex86) de Linker. Cela peut entraîner une génération incorrecte de votre projet. Pour corriger ce problème, vérifiez que les valeurs des propriétés $(OutDir), $(TargetName) et $(TargetExt) correspondent à la valeur spécifiée dans %(Link.OutputFile).
+cg_consolecmds.obj : warning LNK4075: ' /EDITANDCONTINUE' ignoré à cause de la spécification '/SAFESEH'
+     Création de la bibliothèque .\Win32\Debug\cgame.lib et de l'objet .\Win32\Debug\cgame.exp
+  cgame.vcxproj -> C:\travail\qvm_HUD\build\win32-msvc\.\Win32\Debug\cgame.dll
